@@ -144,6 +144,7 @@ def main() -> None:
         database,
         config["username"],
         config["password"],
+        config["default_data_types"]
     )
 
     insert_data(
