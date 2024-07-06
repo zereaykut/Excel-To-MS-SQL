@@ -1,5 +1,11 @@
 {
   "server_ip": "1.1.1.1",
   "username": "your_username",
-  "password": "your_password"
+  "password": "your_password",
+  "default_data_types": {
+    "object": "[nvarchar](255) NULL",
+    "float": "[decimal] (15, 4) NULL",
+    "int": "[int] NULL",
+    "datetime": "[datetime] NULL"
+  }
 }

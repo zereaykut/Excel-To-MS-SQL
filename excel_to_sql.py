@@ -41,6 +41,7 @@ def create_table(
     database: str,
     username: str,
     password: str,
+    data_types: dict
 ) -> None:
     """
     Create table according to given table name if given table not exits
@@ -49,14 +50,14 @@ def create_table(
     types = df_info["type"]
     query_cols = ""
     for col, type_ in zip(cols, types):
-        if "date" in type_:
-            query_cols = f"""{query_cols}, [{col}] [datetime] NULL"""
+        if "datetime" in type_:
+            query_cols = f"""{query_cols}, [{col}] {data_types["datetime"]}"""
         elif "object" in type_:
-            query_cols = f"""{query_cols}, [{col}] [nvarchar](255) NULL"""
+            query_cols = f"""{query_cols}, [{col}] {data_types["object"]}"""
         elif "int" in type_:
-            query_cols = f"""{query_cols}, [{col}] [int] NULL"""
+            query_cols = f"""{query_cols}, [{col}] {data_types["int"]}"""
         elif "float" in type_:
-            query_cols = f"""{query_cols}, [{col}] [decimal] (15, 4) NULL"""
+            query_cols = f"""{query_cols}, [{col}] {data_types["float"]}"""
     query = f"""IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = '{table_name}')
             BEGIN
                 CREATE TABLE {table_name} (
