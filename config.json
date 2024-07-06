@@ -4,7 +4,7 @@
   "password": "your_password",
   "default_data_types": {
     "object": "[nvarchar](255) NULL",
-    "float": "[decimal] (15, 4) NULL",
+    "float": "[decimal] (15, 2) NULL",
     "int": "[int] NULL",
     "datetime": "[datetime] NULL"
   }
