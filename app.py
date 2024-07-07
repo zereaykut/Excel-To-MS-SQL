@@ -9,10 +9,27 @@ class FileChooserApp:
         self.root.title("Excel to MS SQL")
         
         self.file_path_var = tk.StringVar()
-        
+
+        self.config = get_config()
+
         self.create_widgets()
         
+        self.retrieve_database()
+        self.retrieve_table()
+        
     def create_widgets(self):
+        database_entry = tk.Entry(self.root, width=50)
+        database_entry.pack(padx=20, pady=20)
+        
+        database_button = tk.Button(root, text="Submit Database", command=self.retrieve_database)
+        database_button.pack(pady=10)
+
+        table_entry = tk.Entry(self.root, width=50)
+        table_entry.pack(padx=20, pady=20)
+        
+        table_button = tk.Button(root, text="Submit Table", command=self.retrieve_table)
+        table_button.pack(pady=10)
+
         file_path_label = tk.Label(self.root, text="Chosen file:")
         file_path_label.pack(pady=5)
         
@@ -27,7 +44,27 @@ class FileChooserApp:
         
         self.column_info_text = tk.Text(self.root, width=50, height=20)
         self.column_info_text.pack(pady=5)
-        
+
+        create_table_button = tk.Button(self.root, text="Create Table", command=create_table(
+                                                                                        df_info,
+                                                                                        self.table_name,
+                                                                                        self.config["server_ip"],
+                                                                                        self.database,
+                                                                                        self.config["username"],
+                                                                                        self.config["password"],
+                                                                                        self.config["default_data_types"]
+                                                                                    ))
+        create_table_button.pack(pady=5)
+
+        insert_data_button = tk.Button(self.root, text="Insert Data", command=self.choose_file)
+        insert_data_button.pack(pady=5)
+    
+    def retrieve_database(self):
+        self.database = database_entry.get()
+    
+    def retrieve_table(self):
+        self.table_name = table_entry.get()
+
     def choose_file(self):
         file_path = filedialog.askopenfilename(
             filetypes=[("Excel files", "*.xlsx *.xls"), ("CSV files", "*.csv")]
@@ -39,9 +76,9 @@ class FileChooserApp:
     def display_column_info(self, file_path):
         try:
             if file_path.endswith(('.xls', '.xlsx')):
-                df = pd.read_excel(file_path)
+                self.df = pd.read_excel(file_path)
             else:
-                df = pd.read_csv(file_path)
+                self.df = pd.read_csv(file_path)
             
             column_info = ""
             for col in df.columns:
