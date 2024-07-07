@@ -46,7 +46,7 @@ class FileChooserApp:
         self.column_info_text.pack(pady=5)
 
         create_table_button = tk.Button(self.root, text="Create Table", command=create_table(
-                                                                                        df_info,
+                                                                                        self.df_info,
                                                                                         self.table_name,
                                                                                         self.config["server_ip"],
                                                                                         self.database,
@@ -56,7 +56,16 @@ class FileChooserApp:
                                                                                     ))
         create_table_button.pack(pady=5)
 
-        insert_data_button = tk.Button(self.root, text="Insert Data", command=self.choose_file)
+        insert_data_button = tk.Button(self.root, text="Insert Data", command=self.insert_data(
+                                                                                        self.df,
+                                                                                        self.df_info,
+                                                                                        self.table_name,
+                                                                                        self.config["server_ip"],
+                                                                                        self.selfdatabase,
+                                                                                        self.config["username"],
+                                                                                        self.config["password"],
+                                                                                        self.config["floating_point_rounding"]
+                                                                                    ))
         insert_data_button.pack(pady=5)
     
     def retrieve_database(self):
@@ -80,6 +89,8 @@ class FileChooserApp:
             else:
                 self.df = pd.read_csv(file_path)
             
+            self.df_info = get_data_info(self.df)
+
             column_info = ""
             for col in df.columns:
                 column_info += f"{col}: {df[col].dtype}\n"
