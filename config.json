@@ -7,5 +7,6 @@
     "float": "[decimal] (15, 2) NULL",
     "int": "[int] NULL",
     "datetime": "[datetime] NULL"
-  }
+  },
+  "floating_point_rounding": 2
 }
