@@ -1,12 +1,36 @@
 {
-  "server_ip": "1.1.1.1",
-  "username": "your_username",
-  "password": "your_password",
-  "default_data_types": {
-    "object": "[nvarchar](255) NULL",
-    "float": "[decimal] (15, 2) NULL",
-    "int": "[int] NULL",
-    "datetime": "[datetime] NULL"
-  },
-  "floating_point_rounding": 2
+    "server_ip": "enjsqlsrv.enerji.holding.local",
+    "username": "halil.zere",
+    "password": "Rust?/?2024**",
+    "database_name": "EKTM",
+    "table_name": "AA_DENEME",
+    "data_types": {
+        "object": {
+            "type": "nvarchar",
+            "size": 100,
+            "nullable": 1
+        },
+        "float": {
+            "type": "decimal",
+            "size": 10,
+            "precision": 2,
+            "nullable": 1
+        },
+        "int": {
+            "type": [
+                "int",
+                "bigint"
+            ],
+            "type_index": 0,
+            "nullable": 1
+        },
+        "datetime": {
+            "type": [
+                "datetime",
+                "date"
+            ],
+            "type_index": 0,
+            "nullable": 1
+        }
+    }
 }
