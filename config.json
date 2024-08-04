@@ -2,19 +2,20 @@
     "server_ip": "enjsqlsrv.enerji.holding.local",
     "username": "halil.zere",
     "password": "Rust?/?2024**",
-    "database_name": "EKTM",
+    "database_name": "EKTM_HAM",
     "table_name": "AA_DENEME",
     "data_types": {
         "object": {
             "type": "nvarchar",
-            "size": 100,
+            "size": 30,
             "nullable": 1
         },
         "float": {
             "type": "decimal",
             "size": 10,
-            "precision": 2,
-            "nullable": 1
+            "precision": 4,
+            "nullable": 1,
+            "use_sql_float": 1
         },
         "int": {
             "type": [

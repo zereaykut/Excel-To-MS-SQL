@@ -60,7 +60,7 @@ def save_update_config():
                 "table_name": table_name_input.get(),
                 "data_types": {
                     "object": {"type": "nvarchar", "size": nvarchar_size, "nullable": nvarchar_nullable.get()},
-                    "float": {"type": "decimal", "size": decimal_size, "precision": decimal_precision, "nullable": decimal_nullable.get()},
+                    "float": {"type": "decimal", "size": decimal_size, "precision": decimal_precision, "nullable": decimal_nullable.get(), "use_sql_float": decimal_use_sql_float.get()},
                     "int": {"type": ["int", "bigint"], "type_index": int_type.get(), "nullable": int_nullable.get()},
                     "datetime": {"type": ["datetime", "date"], "type_index": date_type.get(), "nullable": date_nullable.get()}
                 }
@@ -87,7 +87,7 @@ def choose_file():
         else:
             messagebox.showerror("Invalid file", "Please select a valid Excel or CSV file.")
 
-def create_table(df_info: pd.DataFrame, table_name: str, server_ip: str, database: str, username: str, password: str, data_types: dict ) -> None:
+def create_table(df_info: pd.DataFrame, table_name: str, server_ip: str, database: str, username: str, password: str, data_types: dict) -> None:
     """
     Create table according to given table name if given table not exits
     """
@@ -95,20 +95,39 @@ def create_table(df_info: pd.DataFrame, table_name: str, server_ip: str, databas
     types = df_info["type"]
     query_cols = ""
 
-    datetime_type = data_types["datetime"]["type"][data_types["datetime"]["type_index"]]
-    datetime_null = "NULL" if data_types["datetime"]["nullable"] == 1 else ""
+    nvarchar_size = nvarchar_size_input.get()
+    try:
+        nvarchar_size = int(nvarchar_size)
+    except Exception as e:
+         messagebox.showerror("nvarchar size", e)
+    
+    decimal_size = decimal_size_input.get()
+    try:
+        decimal_size = int(decimal_size)
+    except Exception as e:
+         messagebox.showerror("decimal size", e)
+
+    decimal_precision = decimal_precision_input.get()
+    try:
+        decimal_precision = int(decimal_precision)
+    except Exception as e:
+         messagebox.showerror("decimal precision", e)
+
+    datetime_type = data_types["datetime"]["type"][date_type.get()]
+    datetime_null = "NULL" if date_nullable.get() == 1 else ""
 
     object_type = data_types["object"]["type"]
-    object_size = data_types["object"]["size"]
-    object_null = "NULL" if data_types["object"]["nullable"] == 1 else ""
+    object_size = nvarchar_size
+    object_null = "NULL" if nvarchar_nullable.get() == 1 else ""
 
-    int_type = data_types["int"]["type"][data_types["int"]["type_index"]]
-    int_null = "NULL" if data_types["int"]["nullable"] == 1 else ""
+    int_type = data_types["int"]["type"][date_type.get()]
+    int_null = "NULL" if int_nullable.get() == 1 else ""
 
     float_type = data_types["float"]["type"]
-    float_size = data_types["float"]["size"]
-    float_precision = data_types["float"]["precision"]
-    float_null = "NULL" if data_types["float"]["nullable"] == 1 else ""
+    float_size = decimal_size
+    float_precision = decimal_precision
+    float_null = "NULL" if decimal_nullable.get() == 1 else ""
+    float_use_sql_float = decimal_use_sql_float.get()
 
     for col, type_ in zip(cols, types):
         if "datetime" in type_:
@@ -118,7 +137,10 @@ def create_table(df_info: pd.DataFrame, table_name: str, server_ip: str, databas
         elif "int" in type_:
             query_cols = f"""{query_cols}, [{col}] [{int_type}] {int_null}"""
         elif "float" in type_:
-            query_cols = f"""{query_cols}, [{col}] [{float_type}] ({float_size}, {float_precision}) {float_null}"""
+            if float_use_sql_float == 0:
+                query_cols = f"""{query_cols}, [{col}] [{float_type}] ({float_size}, {float_precision}) {float_null}"""
+            else:
+                query_cols = f"""{query_cols}, [{col}] [float] {float_null}"""
     query = f"""IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = '{table_name}')
             BEGIN
                 CREATE TABLE {table_name} (
@@ -151,7 +173,7 @@ def create_table_tk():
     
     messagebox.showinfo("Create Table", "Run Completed")
 
-def insert_data(df: pd.DataFrame, df_info: pd.DataFrame, table_name: str, server_ip: str, database: str, username: str, password: str, precision: int ) -> None:
+def insert_data(df: pd.DataFrame, df_info: pd.DataFrame, table_name: str, server_ip: str, database: str, username: str, password: str, precision: int , use_sql_float: str) -> None:
     """
     Insert excel data to created table
     """
@@ -162,9 +184,10 @@ def insert_data(df: pd.DataFrame, df_info: pd.DataFrame, table_name: str, server
     cols = df_info["column"]
     types = df_info["type"]
 
-    for col, type_ in zip(cols, types):
-        if "float" in type_:
-            df[col] = df[col].round(precision)
+    if use_sql_float == 0:
+        for col, type_ in zip(cols, types):
+            if "float" in type_:
+                df[col] = df[col].round(precision)
 
     query_insert = ""
     for col, type_ in zip(cols, types):
@@ -200,7 +223,7 @@ def insert_data_tk():
     database = database_input.get()
     table_name = table_name_input.get()
 
-    insert_data(df, df_info, table_name, config["server_ip"], database, config["username"], config["password"], config["data_types"]["float"]["precision"] )
+    insert_data(df, df_info, table_name, config["server_ip"], database, config["username"], config["password"], config["data_types"]["float"]["precision"], config["data_types"]["float"]["use_sql_float"] )
     messagebox.showinfo("Insert Data", "Run Completed")
 
 
@@ -285,6 +308,10 @@ decimal_precision_input.grid(row=8, column=1, padx=10, pady=(5, 20), sticky="w")
 decimal_nullable = tk.IntVar(value=config["data_types"]["float"]["nullable"])
 decimal_nullable_checkbox = tk.Checkbutton(root, text="Nullable", variable=decimal_nullable, onvalue=1, offvalue=0)
 decimal_nullable_checkbox.grid(row=8, column=2, padx=10, pady=(5, 20), sticky="w")
+
+decimal_use_sql_float = tk.IntVar(value=config["data_types"]["float"]["use_sql_float"])
+decimal_use_sql_float_checkbox = tk.Checkbutton(root, text="Use SQL float data type", variable=decimal_use_sql_float, onvalue=1, offvalue=0)
+decimal_use_sql_float_checkbox.grid(row=8, column=3, padx=10, pady=(5, 20), sticky="w")
 
 # Int Data Type
 int_data_type_label = tk.Label(root, text="Check to use [bigint], uncheck to use [int]", font=("Helvetica", 10))
