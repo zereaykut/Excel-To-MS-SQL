@@ -30,6 +30,6 @@ pip install -r requirements.txt
 
 Run application
 ```shell
-streamlit run app.py
+python app.py
 ```
 
