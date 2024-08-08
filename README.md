@@ -4,8 +4,8 @@ Make easier inserting excel data to Microsoft SQL
 ## Run Application
 Clone the repo
 ```shell
-git clone https://github.com/zereaykut/excel_to_ms_sql
-cd excel_to_ms_sql
+git clone https://github.com/zereaykut/Excel-To-MS-SQL
+cd Excel-To-MS-SQL
 ```
 
 Create python environment
