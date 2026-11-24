@@ -1,0 +1,42 @@
+[project]
+name = "excel-to-mssql"
+version = "2.0.0"
+description = "Modern desktop GUI and CLI tool for importing Excel and CSV files into Microsoft SQL Server."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+keywords = ["excel", "csv", "mssql", "sql-server", "pyodbc", "etl", "tkinter"]
+dependencies = [
+    "numpy>=1.26.0",
+    "openpyxl>=3.1.0",
+    "pandas>=2.2.0",
+    "pyodbc>=5.1.0",
+]
+
+[project.scripts]
+excel-to-mssql = "excel_to_mssql.gui:main"
+excel-to-mssql-cli = "excel_to_mssql.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/excel_to_mssql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

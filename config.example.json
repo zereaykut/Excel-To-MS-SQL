@@ -1,0 +1,47 @@
+{
+    "server_ip": "localhost",
+    "username": "sa",
+    "password": "",
+    "database_name": "master",
+    "table_name": "SampleData",
+    "schema_name": "dbo",
+    "driver": "auto",
+    "trusted_connection": false,
+    "trust_server_certificate": true,
+    "batch_size": 1000,
+    "if_table_exists": "append",
+    "data_types": {
+        "object": {
+            "type": "nvarchar",
+            "size": 255,
+            "nullable": 1
+        },
+        "float": {
+            "type": "decimal",
+            "size": 18,
+            "precision": 4,
+            "nullable": 1,
+            "use_sql_float": 0
+        },
+        "int": {
+            "type": [
+                "int",
+                "bigint"
+            ],
+            "type_index": 0,
+            "nullable": 1
+        },
+        "datetime": {
+            "type": [
+                "datetime",
+                "date"
+            ],
+            "type_index": 0,
+            "nullable": 1
+        },
+        "bool": {
+            "type": "bit",
+            "nullable": 1
+        }
+    }
+}
